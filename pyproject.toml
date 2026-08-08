@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "langgraph-resume-agent"
+version = "0.1.0"
+description = "Full-stack AI resume analyzer using LangGraph, FastAPI, React, and local Ollama LLM inference"
+requires-python = ">=3.11"
+keywords = ["langgraph", "fastapi", "react", "ai-agent", "resume-optimization", "ollama", "rag"]
+dependencies = [
+    "langgraph>=0.1.0",
+    "fastapi>=0.104.0",
+    "uvicorn>=0.24.0",
+    "fastmcp>=0.1.0",
+    "httpx>=0.25.0",
+    "pydantic>=2.0.0",
+    "pydantic-settings>=2.0.0",
+    "python-dotenv>=1.0.0",
+    "python-multipart>=0.0.9",
+    "pypdf>=5.0.0",
+    "python-docx>=1.1.2",
+    "aiohttp>=3.9.0",
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+]
+
+[tool.setuptools]
+packages = []
