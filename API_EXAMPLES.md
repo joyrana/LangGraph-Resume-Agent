@@ -1,4 +1,4 @@
-# Grok ReAct Agent - API Usage Examples
+# LangGraph Resume Agent - API Usage Examples
 
 ## 1. Health Check
 ```bash
@@ -165,7 +165,7 @@ curl -X POST http://localhost:8000/invoke \
 The agent will stop after reaching max_steps and return the best answer found so far.
 
 ### API Key Issues
-Ensure `GROK_API_KEY` in `.env` is valid.
+Ensure Ollama is running at `http://localhost:11434` with `gpt-oss:latest` available.
 
 ## Response Structure
 

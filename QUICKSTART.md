@@ -144,7 +144,7 @@ The ReAct pattern follows this cycle:
 ```
 User Input
     ↓
-Think (Grok generates reasoning)
+Think (Local Ollama generates reasoning)
     ↓
 Act (Execute appropriate tool)
     ↓
@@ -165,9 +165,9 @@ uv sync --refresh
 ```
 
 ### API key issues
-Verify `GROK_API_KEY` in `.env`:
+Verify Ollama is running locally:
 ```bash
-cat .env | grep GROK_API_KEY
+curl http://localhost:11434/api/tags | grep gpt-oss
 ```
 
 ### Port already in use
@@ -188,7 +188,7 @@ uv sync
 Demo/
 ├── main.py              # FastAPI application
 ├── agent.py             # ReAct agent with LangGraph
-├── llm.py              # Grok API integration
+├── llm.py              # Ollama LLM integration
 ├── tools.py            # Tool definitions
 ├── config.py           # Configuration management
 ├── cli.py              # CLI interface
@@ -214,5 +214,6 @@ Demo/
 
 - [LangGraph Docs](https://python.langchain.com/docs/langgraph)
 - [FastAPI Docs](https://fastapi.tiangolo.com)
-- [Grok API Docs](https://docs.x.ai)
+- [Ollama Documentation](https://ollama.ai)
+- [gpt-oss Model](https://huggingface.co/teknium/gpt-oss)
 - [UV Package Manager](https://docs.astral.sh/uv/)

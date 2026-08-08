@@ -19,7 +19,7 @@ A production-ready **full-stack AI platform** for resume analysis and optimizati
 Demo/
 ├── 🧠 Agent Core
 │   ├── agent.py              # ReAct agent with LangGraph state machine
-│   ├── llm.py               # Grok LLM integration
+│   ├── llm.py               # Ollama LLM integration
 │   ├── tools.py             # Tool definitions (calculator, search, web_fetch)
 │   ├── config.py            # Configuration management
 │   └── mcp_server.py        # FastMCP server
@@ -37,7 +37,7 @@ Demo/
 ├── 📦 Configuration
 │   ├── pyproject.toml       # UV dependencies (all packages pre-configured)
 │   ├── uv.lock              # Locked dependency versions
-│   ├── .env                 # Environment variables (Grok API key)
+│   ├── .env                 # Environment variables (Ollama config)
 │   ├── .gitignore           # Git configuration
 │   └── Dockerfile           # Docker containerization
 │
@@ -230,7 +230,7 @@ Edit `agent.py` to modify:
 ## 📊 Performance
 
 - **Setup time**: < 3 minutes with UV
-- **First request**: ~1-2 seconds (Grok API latency)
+- **First request**: ~1-2 seconds (Ollama processing)
 - **Subsequent requests**: Cached responses for repeated queries
 - **Scalability**: Handles multiple concurrent requests
 - **Memory**: ~200-300 MB with JIT compilation
@@ -262,6 +262,6 @@ Then open http://localhost:8000/docs to explore the API!
 
 ---
 
-**Created with**: LangGraph + Grok + FastAPI + FastMCP + UV
+**Created with**: LangGraph + Ollama + FastAPI + React + UV
 **Python Version**: 3.11+
 **All dependencies**: Pre-installed and configured ✅

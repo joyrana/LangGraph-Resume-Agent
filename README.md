@@ -147,8 +147,5 @@ If you see import errors, ensure dependencies are installed:
 uv sync --refresh
 ```
 
-### API Key Issues
-Verify the `GROK_API_KEY` in `.env` is correct and has proper permissions.
-
 ### Connection Errors
-Ensure the Grok API is accessible from your network and API key is valid.
+Verify Ollama is running locally at `http://localhost:11434` with `gpt-oss:latest` model installed.

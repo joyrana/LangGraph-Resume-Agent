@@ -29,7 +29,7 @@ Full-stack AI resume analyzer using LangGraph, FastAPI, React, and Ollama. This 
 | File | Purpose | Size |
 |------|---------|------|
 | [agent.py](agent.py) | ReAct agent with LangGraph state machine | 5.6 KB |
-| [llm.py](llm.py) | Grok LLM API client with async support | 1.7 KB |
+| [llm.py](llm.py) | Ollama LLM client with async support | 1.7 KB |
 | [tools.py](tools.py) | Tool definitions and execution framework | 3.1 KB |
 | [config.py](config.py) | Environment configuration management | 516 B |
 | [mcp_server.py](mcp_server.py) | FastMCP server for MCP protocol | 672 B |
@@ -146,7 +146,7 @@ User Input → Think → Act → Observe → Repeat → Final Answer
 
 ### LangGraph State Machine
 Orchestrates the agent flow with four nodes:
-- **think** - Generate reasoning from Grok LLM
+- **think** - Generate reasoning from local Ollama LLM
 - **act** - Execute the selected tool
 - **observe** - Process tool output
 - **answer** - Prepare final response
@@ -168,7 +168,7 @@ Orchestrates the agent flow with four nodes:
 ```
 main.py (FastAPI)
 ├── agent.py (ReAct Agent)
-│   ├── llm.py (Grok API)
+│   ├── llm.py (Ollama integration)
 │   ├── tools.py (Tool Execution)
 │   └── config.py (Settings)
 ├── config.py (Settings)
@@ -209,7 +209,7 @@ mcp_server.py (FastMCP)
 | Issue | Solution |
 |-------|----------|
 | Dependencies won't install | See [QUICKSTART.md](QUICKSTART.md#troubleshooting) |
-| API won't start | Check `.env` file has valid Grok API key |
+| API won't start | Ensure Ollama is running at http://localhost:11434 |
 | Port 8000 in use | Run on different port: `uv run uvicorn main:app --port 8001` |
 | Import errors | Run `uv sync --refresh` |
 | Tests failing | Check Python version is 3.11+ and all dependencies installed |
@@ -248,7 +248,7 @@ Total: 102 packages (all installed via `uv sync`)
 
 - **LangGraph**: https://python.langchain.com/docs/langgraph
 - **FastAPI**: https://fastapi.tiangolo.com
-- **Grok API**: https://docs.x.ai
+- **Ollama**: https://ollama.ai
 - **UV Package Manager**: https://docs.astral.sh/uv/
 
 ---

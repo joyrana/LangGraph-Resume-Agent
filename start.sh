@@ -3,7 +3,7 @@
 
 set -e
 
-echo "🚀 Starting Grok ReAct Agent..."
+echo "🚀 Starting LangGraph Resume Agent..."
 echo ""
 
 # Check if .env exists

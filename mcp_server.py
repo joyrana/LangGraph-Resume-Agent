@@ -8,7 +8,7 @@ import json
 
 def create_mcp_server() -> Server:
     """Create FastMCP server with agent tools"""
-    server = Server("grok-react-agent-mcp")
+    server = Server("langgraph-resume-agent-mcp")
     
     @server.tool()
     async def invoke_agent(query: str) -> dict:
