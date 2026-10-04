@@ -54,7 +54,7 @@ End to end (all gates):
 | Metric | Result |
 |---|---|
 | Regressions blocked (FAIL) | 139 / 139 |
-| Controlled edits with the expected decision | 15 / 15 before the shift-compensation change; see note below |
+| Controlled edits with the expected decision | 15 / 15 (false-positive rate 0 / 14 among edits expected to PASS) |
 | Proposal validator vs labelled dataset (`proposals/2026.10.1`, 33 cases) | 33 / 33; 16 / 16 unsupported or inflated claims blocked; 0 / 11 grounded edits rejected |
 
 Visual gate alone, how calibration changed the design:
@@ -65,12 +65,14 @@ Visual gate alone, how calibration changed the design:
 | 2 | + word colour comparison | 0 / 98 | 0 / 14 |
 | 3 | + 3 pixel-only regressions, per-channel colour diff | 1–2 / 110 depending on pixel threshold (32 catches light cell shading, 48 does not) | 0 / 14 |
 | 4 | + shift-compensated diff below edits | 0 / 110 at every threshold | **1 / 14** (`tables/edit0`: sub-pixel reflow anti-aliasing) |
-| 5 | + ±1 px tolerant shifted diff | spot-checked: highlight and shading below the reflow still caught | spot-checked: `tables/edit0` passes |
+| 5 (current) | + ±1 px tolerant shifted diff | **0 / 110** at pixel threshold 32 (1 / 110 at 48 and 96: light cell shading) | **0 / 14** at every threshold |
 
-Iteration 5 is covered by `test_visual_gate_reflowed_table_clean_but_detects_changes_below_reflow`.
-The committed `fidelity_eval.json` is from iteration 4; rerun the calibration to
-refresh it. Defaults chosen from the sweep: position tolerance 0.75 pt, pixel
-threshold 32, minimum region 16 px.
+The committed `fidelity_eval.json` is from iteration 5 (run time ≈ 30 min).
+Iteration 5 is also covered by `test_visual_gate_reflowed_table_clean_but_detects_changes_below_reflow`.
+Defaults chosen from the sweep: pixel threshold 32 (the only setting with no
+misses), position tolerance 0.75 pt and minimum region 16 px (the middle values;
+position tolerance and region size made no difference on this corpus, so they are
+not yet calibrated by it).
 
 ## Limitations
 

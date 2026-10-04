@@ -7,11 +7,11 @@
     "dpi": 100
   },
   "platform": "Linux-6.18.44-fc-v64-x86_64-with-glibc2.39",
-  "runtime_seconds": 544.0,
+  "runtime_seconds": 1770.6,
   "end_to_end": {
     "controlled_edits": 15,
-    "controlled_edits_correct": 14,
-    "false_positive_rate": 0.0714,
+    "controlled_edits_correct": 15,
+    "false_positive_rate": 0.0,
     "regressions": 139,
     "regressions_detected": 139,
     "false_negative_rate": 0.0,
@@ -30,14 +30,12 @@
       },
       "true_positives": 110,
       "false_negatives": 0,
-      "false_positives": 1,
-      "true_negatives": 13,
+      "false_positives": 0,
+      "true_negatives": 14,
       "false_negative_rate": 0.0,
-      "false_positive_rate": 0.0714,
+      "false_positive_rate": 0.0,
       "missed": [],
-      "false_alarms": [
-        "tables/edit0"
-      ]
+      "false_alarms": []
     },
     "sweep": [
       {
@@ -51,14 +49,12 @@
         },
         "true_positives": 110,
         "false_negatives": 0,
-        "false_positives": 1,
-        "true_negatives": 13,
+        "false_positives": 0,
+        "true_negatives": 14,
         "false_negative_rate": 0.0,
-        "false_positive_rate": 0.0714,
+        "false_positive_rate": 0.0,
         "missed": [],
-        "false_alarms": [
-          "tables/edit0"
-        ]
+        "false_alarms": []
       },
       {
         "thresholds": {
@@ -71,14 +67,12 @@
         },
         "true_positives": 110,
         "false_negatives": 0,
-        "false_positives": 1,
-        "true_negatives": 13,
+        "false_positives": 0,
+        "true_negatives": 14,
         "false_negative_rate": 0.0,
-        "false_positive_rate": 0.0714,
+        "false_positive_rate": 0.0,
         "missed": [],
-        "false_alarms": [
-          "tables/edit0"
-        ]
+        "false_alarms": []
       },
       {
         "thresholds": {
@@ -91,14 +85,12 @@
         },
         "true_positives": 110,
         "false_negatives": 0,
-        "false_positives": 1,
-        "true_negatives": 13,
+        "false_positives": 0,
+        "true_negatives": 14,
         "false_negative_rate": 0.0,
-        "false_positive_rate": 0.0714,
+        "false_positive_rate": 0.0,
         "missed": [],
-        "false_alarms": [
-          "tables/edit0"
-        ]
+        "false_alarms": []
       },
       {
         "thresholds": {
@@ -109,16 +101,16 @@
           "expected_region_padding_px": 4,
           "graphics_tolerance_pt": 0.5
         },
-        "true_positives": 110,
-        "false_negatives": 0,
-        "false_positives": 1,
-        "true_negatives": 13,
-        "false_negative_rate": 0.0,
-        "false_positive_rate": 0.0714,
-        "missed": [],
-        "false_alarms": [
-          "tables/edit0"
-        ]
+        "true_positives": 109,
+        "false_negatives": 1,
+        "false_positives": 0,
+        "true_negatives": 14,
+        "false_negative_rate": 0.0091,
+        "false_positive_rate": 0.0,
+        "missed": [
+          "tables/cell_shading_added"
+        ],
+        "false_alarms": []
       },
       {
         "thresholds": {
@@ -129,16 +121,16 @@
           "expected_region_padding_px": 4,
           "graphics_tolerance_pt": 0.5
         },
-        "true_positives": 110,
-        "false_negatives": 0,
-        "false_positives": 1,
-        "true_negatives": 13,
-        "false_negative_rate": 0.0,
-        "false_positive_rate": 0.0714,
-        "missed": [],
-        "false_alarms": [
-          "tables/edit0"
-        ]
+        "true_positives": 109,
+        "false_negatives": 1,
+        "false_positives": 0,
+        "true_negatives": 14,
+        "false_negative_rate": 0.0091,
+        "false_positive_rate": 0.0,
+        "missed": [
+          "tables/cell_shading_added"
+        ],
+        "false_alarms": []
       },
       {
         "thresholds": {
@@ -149,16 +141,16 @@
           "expected_region_padding_px": 4,
           "graphics_tolerance_pt": 0.5
         },
-        "true_positives": 110,
-        "false_negatives": 0,
-        "false_positives": 1,
-        "true_negatives": 13,
-        "false_negative_rate": 0.0,
-        "false_positive_rate": 0.0714,
-        "missed": [],
-        "false_alarms": [
-          "tables/edit0"
-        ]
+        "true_positives": 109,
+        "false_negatives": 1,
+        "false_positives": 0,
+        "true_negatives": 14,
+        "false_negative_rate": 0.0091,
+        "false_positive_rate": 0.0,
+        "missed": [
+          "tables/cell_shading_added"
+        ],
+        "false_alarms": []
       },
       {
         "thresholds": {
@@ -169,16 +161,16 @@
           "expected_region_padding_px": 4,
           "graphics_tolerance_pt": 0.5
         },
-        "true_positives": 110,
-        "false_negatives": 0,
-        "false_positives": 1,
-        "true_negatives": 13,
-        "false_negative_rate": 0.0,
-        "false_positive_rate": 0.0714,
-        "missed": [],
-        "false_alarms": [
-          "tables/edit0"
-        ]
+        "true_positives": 109,
+        "false_negatives": 1,
+        "false_positives": 0,
+        "true_negatives": 14,
+        "false_negative_rate": 0.0091,
+        "false_positive_rate": 0.0,
+        "missed": [
+          "tables/cell_shading_added"
+        ],
+        "false_alarms": []
       },
       {
         "thresholds": {
@@ -189,16 +181,16 @@
           "expected_region_padding_px": 4,
           "graphics_tolerance_pt": 0.5
         },
-        "true_positives": 110,
-        "false_negatives": 0,
-        "false_positives": 1,
-        "true_negatives": 13,
-        "false_negative_rate": 0.0,
-        "false_positive_rate": 0.0714,
-        "missed": [],
-        "false_alarms": [
-          "tables/edit0"
-        ]
+        "true_positives": 109,
+        "false_negatives": 1,
+        "false_positives": 0,
+        "true_negatives": 14,
+        "false_negative_rate": 0.0091,
+        "false_positive_rate": 0.0,
+        "missed": [
+          "tables/cell_shading_added"
+        ],
+        "false_alarms": []
       },
       {
         "thresholds": {
@@ -209,16 +201,16 @@
           "expected_region_padding_px": 4,
           "graphics_tolerance_pt": 0.5
         },
-        "true_positives": 110,
-        "false_negatives": 0,
-        "false_positives": 1,
-        "true_negatives": 13,
-        "false_negative_rate": 0.0,
-        "false_positive_rate": 0.0714,
-        "missed": [],
-        "false_alarms": [
-          "tables/edit0"
-        ]
+        "true_positives": 109,
+        "false_negatives": 1,
+        "false_positives": 0,
+        "true_negatives": 14,
+        "false_negative_rate": 0.0091,
+        "false_positive_rate": 0.0,
+        "missed": [
+          "tables/cell_shading_added"
+        ],
+        "false_alarms": []
       },
       {
         "thresholds": {
@@ -231,14 +223,12 @@
         },
         "true_positives": 110,
         "false_negatives": 0,
-        "false_positives": 1,
-        "true_negatives": 13,
+        "false_positives": 0,
+        "true_negatives": 14,
         "false_negative_rate": 0.0,
-        "false_positive_rate": 0.0714,
+        "false_positive_rate": 0.0,
         "missed": [],
-        "false_alarms": [
-          "tables/edit0"
-        ]
+        "false_alarms": []
       },
       {
         "thresholds": {
@@ -251,14 +241,12 @@
         },
         "true_positives": 110,
         "false_negatives": 0,
-        "false_positives": 1,
-        "true_negatives": 13,
+        "false_positives": 0,
+        "true_negatives": 14,
         "false_negative_rate": 0.0,
-        "false_positive_rate": 0.0714,
+        "false_positive_rate": 0.0,
         "missed": [],
-        "false_alarms": [
-          "tables/edit0"
-        ]
+        "false_alarms": []
       },
       {
         "thresholds": {
@@ -271,14 +259,12 @@
         },
         "true_positives": 110,
         "false_negatives": 0,
-        "false_positives": 1,
-        "true_negatives": 13,
+        "false_positives": 0,
+        "true_negatives": 14,
         "false_negative_rate": 0.0,
-        "false_positive_rate": 0.0714,
+        "false_positive_rate": 0.0,
         "missed": [],
-        "false_alarms": [
-          "tables/edit0"
-        ]
+        "false_alarms": []
       },
       {
         "thresholds": {
@@ -289,16 +275,16 @@
           "expected_region_padding_px": 4,
           "graphics_tolerance_pt": 0.5
         },
-        "true_positives": 110,
-        "false_negatives": 0,
-        "false_positives": 1,
-        "true_negatives": 13,
-        "false_negative_rate": 0.0,
-        "false_positive_rate": 0.0714,
-        "missed": [],
-        "false_alarms": [
-          "tables/edit0"
-        ]
+        "true_positives": 109,
+        "false_negatives": 1,
+        "false_positives": 0,
+        "true_negatives": 14,
+        "false_negative_rate": 0.0091,
+        "false_positive_rate": 0.0,
+        "missed": [
+          "tables/cell_shading_added"
+        ],
+        "false_alarms": []
       },
       {
         "thresholds": {
@@ -309,16 +295,16 @@
           "expected_region_padding_px": 4,
           "graphics_tolerance_pt": 0.5
         },
-        "true_positives": 110,
-        "false_negatives": 0,
-        "false_positives": 1,
-        "true_negatives": 13,
-        "false_negative_rate": 0.0,
-        "false_positive_rate": 0.0714,
-        "missed": [],
-        "false_alarms": [
-          "tables/edit0"
-        ]
+        "true_positives": 109,
+        "false_negatives": 1,
+        "false_positives": 0,
+        "true_negatives": 14,
+        "false_negative_rate": 0.0091,
+        "false_positive_rate": 0.0,
+        "missed": [
+          "tables/cell_shading_added"
+        ],
+        "false_alarms": []
       },
       {
         "thresholds": {
@@ -329,16 +315,16 @@
           "expected_region_padding_px": 4,
           "graphics_tolerance_pt": 0.5
         },
-        "true_positives": 110,
-        "false_negatives": 0,
-        "false_positives": 1,
-        "true_negatives": 13,
-        "false_negative_rate": 0.0,
-        "false_positive_rate": 0.0714,
-        "missed": [],
-        "false_alarms": [
-          "tables/edit0"
-        ]
+        "true_positives": 109,
+        "false_negatives": 1,
+        "false_positives": 0,
+        "true_negatives": 14,
+        "false_negative_rate": 0.0091,
+        "false_positive_rate": 0.0,
+        "missed": [
+          "tables/cell_shading_added"
+        ],
+        "false_alarms": []
       },
       {
         "thresholds": {
@@ -349,16 +335,16 @@
           "expected_region_padding_px": 4,
           "graphics_tolerance_pt": 0.5
         },
-        "true_positives": 110,
-        "false_negatives": 0,
-        "false_positives": 1,
-        "true_negatives": 13,
-        "false_negative_rate": 0.0,
-        "false_positive_rate": 0.0714,
-        "missed": [],
-        "false_alarms": [
-          "tables/edit0"
-        ]
+        "true_positives": 109,
+        "false_negatives": 1,
+        "false_positives": 0,
+        "true_negatives": 14,
+        "false_negative_rate": 0.0091,
+        "false_positive_rate": 0.0,
+        "missed": [
+          "tables/cell_shading_added"
+        ],
+        "false_alarms": []
       },
       {
         "thresholds": {
@@ -369,16 +355,16 @@
           "expected_region_padding_px": 4,
           "graphics_tolerance_pt": 0.5
         },
-        "true_positives": 110,
-        "false_negatives": 0,
-        "false_positives": 1,
-        "true_negatives": 13,
-        "false_negative_rate": 0.0,
-        "false_positive_rate": 0.0714,
-        "missed": [],
-        "false_alarms": [
-          "tables/edit0"
-        ]
+        "true_positives": 109,
+        "false_negatives": 1,
+        "false_positives": 0,
+        "true_negatives": 14,
+        "false_negative_rate": 0.0091,
+        "false_positive_rate": 0.0,
+        "missed": [
+          "tables/cell_shading_added"
+        ],
+        "false_alarms": []
       },
       {
         "thresholds": {
@@ -389,16 +375,16 @@
           "expected_region_padding_px": 4,
           "graphics_tolerance_pt": 0.5
         },
-        "true_positives": 110,
-        "false_negatives": 0,
-        "false_positives": 1,
-        "true_negatives": 13,
-        "false_negative_rate": 0.0,
-        "false_positive_rate": 0.0714,
-        "missed": [],
-        "false_alarms": [
-          "tables/edit0"
-        ]
+        "true_positives": 109,
+        "false_negatives": 1,
+        "false_positives": 0,
+        "true_negatives": 14,
+        "false_negative_rate": 0.0091,
+        "false_positive_rate": 0.0,
+        "missed": [
+          "tables/cell_shading_added"
+        ],
+        "false_alarms": []
       },
       {
         "thresholds": {
@@ -411,14 +397,12 @@
         },
         "true_positives": 110,
         "false_negatives": 0,
-        "false_positives": 1,
-        "true_negatives": 13,
+        "false_positives": 0,
+        "true_negatives": 14,
         "false_negative_rate": 0.0,
-        "false_positive_rate": 0.0714,
+        "false_positive_rate": 0.0,
         "missed": [],
-        "false_alarms": [
-          "tables/edit0"
-        ]
+        "false_alarms": []
       },
       {
         "thresholds": {
@@ -431,14 +415,12 @@
         },
         "true_positives": 110,
         "false_negatives": 0,
-        "false_positives": 1,
-        "true_negatives": 13,
+        "false_positives": 0,
+        "true_negatives": 14,
         "false_negative_rate": 0.0,
-        "false_positive_rate": 0.0714,
+        "false_positive_rate": 0.0,
         "missed": [],
-        "false_alarms": [
-          "tables/edit0"
-        ]
+        "false_alarms": []
       },
       {
         "thresholds": {
@@ -451,14 +433,12 @@
         },
         "true_positives": 110,
         "false_negatives": 0,
-        "false_positives": 1,
-        "true_negatives": 13,
+        "false_positives": 0,
+        "true_negatives": 14,
         "false_negative_rate": 0.0,
-        "false_positive_rate": 0.0714,
+        "false_positive_rate": 0.0,
         "missed": [],
-        "false_alarms": [
-          "tables/edit0"
-        ]
+        "false_alarms": []
       },
       {
         "thresholds": {
@@ -469,16 +449,16 @@
           "expected_region_padding_px": 4,
           "graphics_tolerance_pt": 0.5
         },
-        "true_positives": 110,
-        "false_negatives": 0,
-        "false_positives": 1,
-        "true_negatives": 13,
-        "false_negative_rate": 0.0,
-        "false_positive_rate": 0.0714,
-        "missed": [],
-        "false_alarms": [
-          "tables/edit0"
-        ]
+        "true_positives": 109,
+        "false_negatives": 1,
+        "false_positives": 0,
+        "true_negatives": 14,
+        "false_negative_rate": 0.0091,
+        "false_positive_rate": 0.0,
+        "missed": [
+          "tables/cell_shading_added"
+        ],
+        "false_alarms": []
       },
       {
         "thresholds": {
@@ -489,16 +469,16 @@
           "expected_region_padding_px": 4,
           "graphics_tolerance_pt": 0.5
         },
-        "true_positives": 110,
-        "false_negatives": 0,
-        "false_positives": 1,
-        "true_negatives": 13,
-        "false_negative_rate": 0.0,
-        "false_positive_rate": 0.0714,
-        "missed": [],
-        "false_alarms": [
-          "tables/edit0"
-        ]
+        "true_positives": 109,
+        "false_negatives": 1,
+        "false_positives": 0,
+        "true_negatives": 14,
+        "false_negative_rate": 0.0091,
+        "false_positive_rate": 0.0,
+        "missed": [
+          "tables/cell_shading_added"
+        ],
+        "false_alarms": []
       },
       {
         "thresholds": {
@@ -509,16 +489,16 @@
           "expected_region_padding_px": 4,
           "graphics_tolerance_pt": 0.5
         },
-        "true_positives": 110,
-        "false_negatives": 0,
-        "false_positives": 1,
-        "true_negatives": 13,
-        "false_negative_rate": 0.0,
-        "false_positive_rate": 0.0714,
-        "missed": [],
-        "false_alarms": [
-          "tables/edit0"
-        ]
+        "true_positives": 109,
+        "false_negatives": 1,
+        "false_positives": 0,
+        "true_negatives": 14,
+        "false_negative_rate": 0.0091,
+        "false_positive_rate": 0.0,
+        "missed": [
+          "tables/cell_shading_added"
+        ],
+        "false_alarms": []
       },
       {
         "thresholds": {
@@ -529,16 +509,16 @@
           "expected_region_padding_px": 4,
           "graphics_tolerance_pt": 0.5
         },
-        "true_positives": 110,
-        "false_negatives": 0,
-        "false_positives": 1,
-        "true_negatives": 13,
-        "false_negative_rate": 0.0,
-        "false_positive_rate": 0.0714,
-        "missed": [],
-        "false_alarms": [
-          "tables/edit0"
-        ]
+        "true_positives": 109,
+        "false_negatives": 1,
+        "false_positives": 0,
+        "true_negatives": 14,
+        "false_negative_rate": 0.0091,
+        "false_positive_rate": 0.0,
+        "missed": [
+          "tables/cell_shading_added"
+        ],
+        "false_alarms": []
       },
       {
         "thresholds": {
@@ -549,16 +529,16 @@
           "expected_region_padding_px": 4,
           "graphics_tolerance_pt": 0.5
         },
-        "true_positives": 110,
-        "false_negatives": 0,
-        "false_positives": 1,
-        "true_negatives": 13,
-        "false_negative_rate": 0.0,
-        "false_positive_rate": 0.0714,
-        "missed": [],
-        "false_alarms": [
-          "tables/edit0"
-        ]
+        "true_positives": 109,
+        "false_negatives": 1,
+        "false_positives": 0,
+        "true_negatives": 14,
+        "false_negative_rate": 0.0091,
+        "false_positive_rate": 0.0,
+        "missed": [
+          "tables/cell_shading_added"
+        ],
+        "false_alarms": []
       },
       {
         "thresholds": {
@@ -569,16 +549,16 @@
           "expected_region_padding_px": 4,
           "graphics_tolerance_pt": 0.5
         },
-        "true_positives": 110,
-        "false_negatives": 0,
-        "false_positives": 1,
-        "true_negatives": 13,
-        "false_negative_rate": 0.0,
-        "false_positive_rate": 0.0714,
-        "missed": [],
-        "false_alarms": [
-          "tables/edit0"
-        ]
+        "true_positives": 109,
+        "false_negatives": 1,
+        "false_positives": 0,
+        "true_negatives": 14,
+        "false_negative_rate": 0.0091,
+        "false_positive_rate": 0.0,
+        "missed": [
+          "tables/cell_shading_added"
+        ],
+        "false_alarms": []
       }
     ]
   },
@@ -632,15 +612,14 @@
       "case": "tables/edit0",
       "note": "text inside a table cell",
       "expected": "PASS",
-      "decision": "REVIEW_REQUIRED",
-      "visual": "REVIEW_REQUIRED",
+      "decision": "PASS",
+      "visual": "PASS",
       "findings": [
         "vertical_reflow",
         "edited_text_line_count_changed",
-        "graphics_changed_on_reflowed_page",
-        "unexpected_visual_change"
+        "graphics_changed_on_reflowed_page"
       ],
-      "correct": false
+      "correct": true
     },
     {
       "case": "tables/edit1",
@@ -845,8 +824,7 @@
       },
       "findings": [
         "unedited_paragraph_changed",
-        "shift_before_edit",
-        "unexpected_visual_change"
+        "shift_before_edit"
       ]
     },
     {
@@ -1370,8 +1348,7 @@
       },
       "findings": [
         "unedited_paragraph_changed",
-        "shift_before_edit",
-        "unexpected_visual_change"
+        "shift_before_edit"
       ]
     },
     {
@@ -1615,8 +1592,7 @@
         "shift_before_edit",
         "line_wrap_changed",
         "edited_text_line_count_changed",
-        "graphics_changed_on_reflowed_page",
-        "unexpected_visual_change"
+        "graphics_changed_on_reflowed_page"
       ]
     },
     {
@@ -1862,14 +1838,13 @@
         "integrity": "PASS",
         "structure": "FAIL",
         "content": "PASS",
-        "visual": "REVIEW_REQUIRED"
+        "visual": "PASS"
       },
       "findings": [
         "unexpected_part_change",
         "vertical_reflow",
         "edited_text_line_count_changed",
-        "graphics_changed_on_reflowed_page",
-        "unexpected_visual_change"
+        "graphics_changed_on_reflowed_page"
       ]
     },
     {
@@ -1966,8 +1941,7 @@
       },
       "findings": [
         "unedited_paragraph_changed",
-        "shift_before_edit",
-        "unexpected_visual_change"
+        "shift_before_edit"
       ]
     },
     {
@@ -3090,8 +3064,7 @@
       },
       "findings": [
         "unedited_paragraph_changed",
-        "shift_before_edit",
-        "unexpected_visual_change"
+        "shift_before_edit"
       ]
     },
     {
