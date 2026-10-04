@@ -1,151 +1,118 @@
 # LangGraph Resume Agent
 
-A full-stack AI-powered resume analysis and optimization platform. Built with **LangGraph**, **FastAPI**, **React/Vite**, and **local Ollama** inference. Features a ReAct agent that intelligently analyzes resumes and provides AI-driven optimization suggestions.
+Improves a Word resume for a specific job **without replacing it**. You upload
+your `.docx` and a job description. The system proposes small, sourced text
+edits; you accept or reject each one; only the accepted edits are written into
+your original file. The result is checked for structural, content and layout
+changes before you can download it.
 
-## Setup
+* **DOCX only.** PDF, `.doc`, RTF, ODT, templates, macro-enabled, encrypted or
+  malformed files are rejected with a specific reason.
+* **The model suggests; code edits.** The LLM returns JSON proposals. It never
+  sees or writes document XML. A deterministic editor changes only the text of
+  the targeted runs, so fonts, styles, bullets, tables, headers, images and page
+  setup stay exactly as they were.
+* **No invented facts.** Every proposal must quote the resume as evidence.
+  New numbers, technologies, certifications or job-description keywords that
+  the resume does not support are rejected. Edits that inflate claims ("worked
+  on" → "led") need your explicit confirmation.
+* **Delivery gates.** Every output is reopened and compared with the original
+  (package integrity, XML structure, exact accepted text, rendered layout via
+  LibreOffice). Failures block the download; layout warnings require your
+  acknowledgement.
 
-### Prerequisites
-- Python 3.11+
-- UV package manager
+Documentation: [Architecture](docs/ARCHITECTURE.md) · [HTTP API](docs/API.md) ·
+[Fidelity evaluation and limitations](docs/FIDELITY_EVALUATION.md) ·
+[Audit and plan](docs/IMPLEMENTATION_PLAN.md)
 
-### Installation
+## Requirements
 
-1. **Install UV** (if not already installed):
+| Component | Version | Why |
+|---|---|---|
+| Python | 3.11–3.13 | backend |
+| [uv](https://docs.astral.sh/uv/) | ≥ 0.5 | dependency management |
+| LibreOffice (`soffice`) + poppler (`pdftoppm`) | LibreOffice **24.2** recommended | visual layout gate; thresholds were calibrated on 24.2.7.2 |
+| Node.js | ≥ 18 | frontend |
+| [Ollama](https://ollama.com) | any | local model (default `gpt-oss:latest`) |
+
+Without LibreOffice the app still works, but the visual check cannot run, so
+every result needs your review (or is blocked if `RESUME_VISUAL_GATE_REQUIRED=true`).
+
+## Run locally
+
 ```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
+cp env.example .env              # adjust OLLAMA_MODEL if needed
+uv lock && uv sync --extra dev   # uv.lock must be generated once and committed
+ollama pull gpt-oss              # or any model; set OLLAMA_MODEL
+(cd frontend && npm install)
+./dev.sh                         # API on http://127.0.0.1:8000, UI on http://localhost:5173
 ```
 
-2. **Install dependencies using UV**:
+API only: `./start.sh` (or `uv run uvicorn main:app`). Interactive API docs:
+`http://127.0.0.1:8000/docs`.
+
+macOS: `brew install --cask libreoffice && brew install poppler`.
+Debian/Ubuntu: `apt install libreoffice-writer-nogui poppler-utils fonts-crosextra-carlito fonts-crosextra-caladea`.
+
+### Docker
+
 ```bash
-uv sync
+docker compose up --build                        # API on :8000, model at $OLLAMA_BASE_URL
+docker compose --profile ollama up --build       # also start a local Ollama container
 ```
 
-3. **Create environment file**:
-Copy the provided `.env` file (API key is already configured):
+The image is based on Ubuntu 24.04 (LibreOffice 24.2.x, the calibrated series),
+runs as a non-root user and stores data in the `resume-data` volume.
+
+## Test and evaluate
+
 ```bash
-cp env.example .env
-# Or use the pre-configured .env file
+uv run pytest                         # unit, integration, security, evaluation suites
+uv run pytest -m "not renderer"       # without LibreOffice
+uv run ruff check . && uv run ruff format --check . && uv run mypy app
+(cd frontend && npx tsc --noEmit)
+
+uv run python -m app.evaluation.fidelity_eval --out evaluation/reports    # gate calibration (~9 min)
+uv run python -m app.evaluation.proposal_eval --out evaluation/reports    # validator vs labelled dataset
+uv run python -m app.evaluation.proposal_eval --live --out evaluation/reports   # against your configured model
 ```
 
-## Project Structure
-
-```
-.
-├── config.py           # Configuration management
-├── llm.py             # Ollama LLM integration
-├── tools.py           # Tool definitions and execution
-├── agent.py           # ReAct agent with LangGraph
-├── mcp_server.py      # FastMCP server
-├── main.py            # FastAPI application
-├── cli.py             # CLI interface
-├── .env               # Environment configuration
-└── pyproject.toml     # Project dependencies (UV)
-```
-
-## Usage
-
-### Run the full monorepo
-```bash
-./dev.sh
-```
-
-This starts:
-- Backend: `http://localhost:8000`
-- Frontend: `http://localhost:5173`
-
-### 1. Start the FastAPI Server
-```bash
-uv run python main.py
-```
-
-The API will be available at `http://localhost:8000`
-
-API Endpoints:
-- `GET /health` - Health check
-- `POST /invoke` - Invoke the agent
-- `GET /tools` - List available tools
-
-### 2. Use the CLI
-```bash
-uv run python cli.py
-```
-
-Example queries:
-```
-You: What is 25 times 4?
-You: Search for Python machine learning libraries
-You: What's the capital of France?
-```
-
-### 3. Use the FastAPI Interactive Docs
-Open `http://localhost:8000/docs` in your browser for interactive API documentation.
-
-## Agent Features
-
-### ReAct Pattern
-The agent follows the Reasoning and Acting (ReAct) pattern:
-1. **Think** - Generate reasoning about the task
-2. **Act** - Execute an appropriate tool
-3. **Observe** - Process the tool output
-4. **Repeat** - Until the final answer is reached
-
-### Available Tools
-- **calculator** - Perform arithmetic operations (add, subtract, multiply, divide)
-- **search** - Search for information
-- **web_fetch** - Fetch content from URLs
-
-### LLM Integration
-- Uses local Ollama for reasoning and planning
-- Supports async operations
-- Configurable temperature and token limits
-
-## Development
-
-### Running Tests
-```bash
-uv run python -m pytest tests/
-```
-
-### Running with Debug Mode
-Edit `.env` and set `DEBUG=true`, then:
-```bash
-uv run python main.py
-```
+Tests use a scripted model, so they are deterministic and need no Ollama.
+Renderer tests are skipped automatically when LibreOffice is absent.
 
 ## Configuration
 
-Edit `.env` to customize:
-```
-OLLAMA_BASE_URL=http://localhost:11434
-OLLAMA_MODEL=gpt-oss:latest
-DEBUG=false
-```
+All settings are environment variables, validated at startup; an invalid value
+stops the server with a message naming the variable. See `env.example` for the
+full list. The most important ones:
 
-## Architecture
+| Variable | Default | Notes |
+|---|---|---|
+| `OLLAMA_BASE_URL`, `OLLAMA_MODEL` | `http://localhost:11434`, `gpt-oss:latest` | Resume text is sent here |
+| `RESUME_LLM_PROVIDER` | `ollama` | `disabled` turns analysis off |
+| `RESUME_LLM_TEMPERATURE` | `0.1` | low variance for structured edits |
+| `RESUME_DEPLOYMENT_MODE` | `local` | `shared` requires `RESUME_API_AUTH_TOKEN` and `RESUME_SIGNING_SECRET` |
+| `RESUME_SESSION_TTL_HOURS` | `24` | uploads, outputs and renders are deleted after this |
+| `RESUME_MAX_UPLOAD_BYTES` | 5 MB | also uncompressed-size, member-count and ratio limits |
+| `RESUME_RENDERER_EXPECTED_VERSION` | unset (`24.2` in Docker) | other renderer versions downgrade results to "needs review" |
+| `RESUME_VISUAL_GATE_REQUIRED` | `false` | `true` blocks delivery when layout cannot be checked |
+| `RESUME_LOG_CONTENT` | `false` | never enable in production |
 
-### LangGraph State Machine
-The agent is built as a state machine with nodes:
-- **think** - Reasoning phase
-- **act** - Action execution phase
-- **observe** - Observation processing
-- **answer** - Final answer preparation
+## Privacy
 
-### Async/Await
-All operations are fully async-aware for high performance and scalability.
-
-## Performance Notes
-
-- The agent has a maximum of 10 steps per invocation (configurable)
-- API responses are returned as soon as the final answer is ready
-- All HTTP calls use connection pooling for efficiency
+Resume and job text go only to the configured model endpoint. The server warns
+at startup if that endpoint is not local. Logs never contain resume or job text
+by default. Files are deleted after the session TTL, or immediately via "Delete
+my files" (`DELETE /api/sessions/{id}`).
 
 ## Troubleshooting
 
-### Import Errors
-If you see import errors, ensure dependencies are installed:
-```bash
-uv sync --refresh
-```
-
-### Connection Errors
-Verify Ollama is running locally at `http://localhost:11434` with `gpt-oss:latest` model installed.
+| Symptom | Fix |
+|---|---|
+| "The language model service could not be reached" | Start Ollama (`ollama serve`) and check `OLLAMA_BASE_URL`; use **Try analysis again** |
+| "Model service rejected the request" | `OLLAMA_MODEL` is not pulled: `ollama pull <model>` |
+| Every result says "Rendered layout compared: Not run" | Install LibreOffice and poppler, or set `RESUME_SOFFICE_PATH` / `RESUME_PDFTOPPM_PATH`; check `GET /ready` |
+| "Renderer version … differs from pinned" | Install LibreOffice 24.2, or recalibrate (`fidelity_eval`) and update `RESUME_RENDERER_EXPECTED_VERSION` |
+| Upload rejected: "links to external content" | The document references a remote template or linked image; embed it in Word and re-save |
+| "No editable text was found" | All text is in text boxes or other read-only elements; see the limitations in the fidelity doc |
+| Proposals list is empty | The model found nothing it could support with evidence; add confirmed facts under "Facts you can confirm" |

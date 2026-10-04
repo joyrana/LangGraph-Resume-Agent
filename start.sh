@@ -1,23 +1,5 @@
-#!/bin/bash
-# Quick start script for the ReAct Agent
-
-set -e
-
-echo "🚀 Starting LangGraph Resume Agent..."
-echo ""
-
-# Check if .env exists
-if [ ! -f ".env" ]; then
-    echo "❌ Error: .env file not found"
-    echo "Please ensure .env file exists in the project root"
-    exit 1
-fi
-
-# Run the FastAPI server
-echo "📡 Starting FastAPI server on http://localhost:8000"
-echo "📚 API docs available at http://localhost:8000/docs"
-echo ""
-echo "Press Ctrl+C to stop the server"
-echo ""
-
-uv run uvicorn main:app --reload --host 0.0.0.0 --port 8000
+#!/usr/bin/env bash
+# Start the API only (see dev.sh for API + frontend).
+set -euo pipefail
+cd "$(dirname "$0")"
+exec uv run uvicorn main:app --host 127.0.0.1 --port 8000

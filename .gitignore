@@ -41,3 +41,10 @@ frontend/dist/
 frontend/.turbo/
 *.log
 npm-debug.log*
+
+# Runtime data (uploads, outputs, database) - never commit resumes
+storage/
+*.sqlite3
+*.sqlite3-*
+*.tsbuildinfo
+evaluation/reports/*.png
