@@ -6,8 +6,8 @@ import threading
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
-BACKEND_CMD = ["uv", "run", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
-FRONTEND_CMD = ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+BACKEND_CMD = ["uv", "run", "uvicorn", "main:app", "--host", "127.0.0.1", "--port", "8000"]
+FRONTEND_CMD = ["npm", "run", "dev"]
 
 
 def _stream_output(prefix: str, process: subprocess.Popen[str]) -> None:

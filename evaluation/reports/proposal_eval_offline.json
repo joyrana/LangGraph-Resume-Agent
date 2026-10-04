@@ -1,0 +1,243 @@
+{
+  "dataset_version": "proposals/2026.10.1",
+  "cases": 33,
+  "label_agreement": 1.0,
+  "unsupported_or_inflated_claims": 16,
+  "claim_block_rate": 1.0,
+  "grounded_cases": 11,
+  "grounded_false_rejection_rate": 0.0,
+  "disagreements": [],
+  "rows": [
+    {
+      "id": "grounded_concision",
+      "expected": "accept",
+      "actual": "accept",
+      "correct": true,
+      "claim": false
+    },
+    {
+      "id": "grounded_grammar",
+      "expected": "accept",
+      "actual": "accept",
+      "correct": true,
+      "claim": false
+    },
+    {
+      "id": "grounded_keyword_reorder",
+      "expected": "accept",
+      "actual": "accept",
+      "correct": true,
+      "claim": false
+    },
+    {
+      "id": "keyword_from_skills_section",
+      "expected": "unsupported_term",
+      "actual": "unsupported_term",
+      "correct": true,
+      "claim": true
+    },
+    {
+      "id": "keyword_cited_exact",
+      "expected": "accept",
+      "actual": "accept",
+      "correct": true,
+      "claim": false
+    },
+    {
+      "id": "user_fact_number",
+      "expected": "accept",
+      "actual": "accept",
+      "correct": true,
+      "claim": false
+    },
+    {
+      "id": "fabricated_percentage",
+      "expected": "unsupported_number",
+      "actual": "unsupported_number",
+      "correct": true,
+      "claim": true
+    },
+    {
+      "id": "fabricated_money",
+      "expected": "unsupported_number",
+      "actual": "unsupported_number",
+      "correct": true,
+      "claim": true
+    },
+    {
+      "id": "fabricated_team_size_word",
+      "expected": "changed_number",
+      "actual": "changed_number",
+      "correct": true,
+      "claim": true
+    },
+    {
+      "id": "jd_keyword_kubernetes",
+      "expected": "jd_keyword_without_evidence",
+      "actual": "jd_keyword_without_evidence",
+      "correct": true,
+      "claim": true
+    },
+    {
+      "id": "jd_keyword_lowercase",
+      "expected": "jd_keyword_without_evidence",
+      "actual": "jd_keyword_without_evidence",
+      "correct": true,
+      "claim": true
+    },
+    {
+      "id": "jd_keyword_compound",
+      "expected": "jd_keyword_without_evidence",
+      "actual": "jd_keyword_without_evidence",
+      "correct": true,
+      "claim": true
+    },
+    {
+      "id": "invented_technology",
+      "expected": "unsupported_term",
+      "actual": "unsupported_term",
+      "correct": true,
+      "claim": true
+    },
+    {
+      "id": "invented_certification",
+      "expected": "unsupported_term",
+      "actual": "unsupported_term",
+      "correct": true,
+      "claim": true
+    },
+    {
+      "id": "leadership_inflation",
+      "expected": "accept_confirm",
+      "actual": "accept_confirm",
+      "correct": true,
+      "claim": true
+    },
+    {
+      "id": "ownership_inflation",
+      "expected": "accept_confirm",
+      "actual": "accept_confirm",
+      "correct": true,
+      "claim": true
+    },
+    {
+      "id": "outcome_inflation",
+      "expected": "accept_confirm",
+      "actual": "accept_confirm",
+      "correct": true,
+      "claim": true
+    },
+    {
+      "id": "injected_link",
+      "expected": "unsupported_contact_or_link",
+      "actual": "unsupported_contact_or_link",
+      "correct": true,
+      "claim": true
+    },
+    {
+      "id": "injected_email",
+      "expected": "unsupported_contact_or_link",
+      "actual": "unsupported_contact_or_link",
+      "correct": true,
+      "claim": true
+    },
+    {
+      "id": "misquoted_original",
+      "expected": "target_not_found",
+      "actual": "target_not_found",
+      "correct": true,
+      "claim": false
+    },
+    {
+      "id": "ambiguous_quote",
+      "expected": "ambiguous_target",
+      "actual": "ambiguous_target",
+      "correct": true,
+      "claim": false
+    },
+    {
+      "id": "fabricated_evidence",
+      "expected": "evidence_not_found",
+      "actual": "evidence_not_found",
+      "correct": true,
+      "claim": true
+    },
+    {
+      "id": "read_only_text_box",
+      "expected": "read_only_location",
+      "actual": "read_only_location",
+      "correct": true,
+      "claim": false
+    },
+    {
+      "id": "crosses_tracked_change",
+      "expected": "read_only_text",
+      "actual": "read_only_text",
+      "correct": true,
+      "claim": false
+    },
+    {
+      "id": "crosses_hyperlink",
+      "expected": "crosses_hyperlink",
+      "actual": "crosses_hyperlink",
+      "correct": true,
+      "claim": false
+    },
+    {
+      "id": "inside_hyperlink_ok",
+      "expected": "accept",
+      "actual": "accept",
+      "correct": true,
+      "claim": false
+    },
+    {
+      "id": "crosses_inline_image",
+      "expected": "crosses_object",
+      "actual": "crosses_object",
+      "correct": true,
+      "claim": false
+    },
+    {
+      "id": "table_cell_ok",
+      "expected": "accept",
+      "actual": "accept",
+      "correct": true,
+      "claim": false
+    },
+    {
+      "id": "nested_table_ok",
+      "expected": "unsupported_term",
+      "actual": "unsupported_term",
+      "correct": true,
+      "claim": true
+    },
+    {
+      "id": "multi_run_ok",
+      "expected": "accept",
+      "actual": "accept",
+      "correct": true,
+      "claim": false
+    },
+    {
+      "id": "too_long",
+      "expected": "too_long",
+      "actual": "too_long",
+      "correct": true,
+      "claim": false
+    },
+    {
+      "id": "newline_injection",
+      "expected": "invalid_characters",
+      "actual": "invalid_characters",
+      "correct": true,
+      "claim": false
+    },
+    {
+      "id": "unknown_location",
+      "expected": "unknown_location",
+      "actual": "unknown_location",
+      "correct": true,
+      "claim": false
+    }
+  ]
+}

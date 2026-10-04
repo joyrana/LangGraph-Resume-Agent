@@ -1,20 +1,29 @@
-version: '3.8'
-
 services:
-  resume-agent:
+  api:
     build: .
-    container_name: langgraph-resume-agent
     ports:
       - "8000:8000"
+    env_file:
+      - path: .env
+        required: false
     environment:
-      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://localhost:11434}
-      - OLLAMA_MODEL=${OLLAMA_MODEL:-gpt-oss:latest}
-      - DEBUG=false
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://ollama:11434}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-gpt-oss:latest}
+      RESUME_STORAGE_DIR: /data
     volumes:
-      - .:/app
-    command: uv run uvicorn main:app --host 0.0.0.0 --port 8000 --reload
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
+      - resume-data:/data
+    depends_on:
+      ollama:
+        condition: service_started
+        required: false
+
+  # Optional local model: `docker compose --profile ollama up`, then `docker compose exec ollama ollama pull gpt-oss`
+  ollama:
+    image: ollama/ollama:latest
+    profiles: ["ollama"]
+    volumes:
+      - ollama-models:/root/.ollama
+
+volumes:
+  resume-data:
+  ollama-models:
