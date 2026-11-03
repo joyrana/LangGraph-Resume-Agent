@@ -46,7 +46,7 @@ downloaded.
 | `app/core` | Validated env config, structured errors, JSON logging with redaction and correlation ids, session/download tokens |
 | `app/document` | Upload validation, OOXML parsing and location index, deterministic editor, fidelity gates (structure, content, render, visual diff, decision) |
 | `app/resume` | Prompts (versioned), proposal schemas, evidence validator, edit policy, claim extraction, JD keyword estimate, proposer |
-| `app/llm` | `LLMProvider` protocol; Ollama (structured output, bounded retries), disabled, and scripted (tests) providers |
+| `app/llm` | `LLMProvider` protocol; OpenAI-compatible (default: mlx-lm; schema-guided output, bounded retries), disabled, and scripted (tests) providers |
 | `app/workflow` | Typed graph state, small nodes, routing, graph construction (LangGraph, or built-in executor when LangGraph is absent) |
 | `app/persistence` | SQLite repository (sessions, proposals, decisions, finalizations, audit events) and the artifact store |
 | `app/services` | `ResumeService`: every use case and authorization rule, framework-free |
@@ -103,7 +103,7 @@ part is created or removed, and untouched ZIP members are copied byte-for-byte.
 | Shared deployment | `RESUME_DEPLOYMENT_MODE=shared` requires a deployment bearer token and a strong signing secret (validated at startup) and disables `/docs` |
 | Data retention | Session TTL (default 24 h) with a periodic purge; `DELETE /api/sessions/{id}` removes all files immediately |
 | Log leakage | JSON logs redact content fields; tracebacks are reduced to the exception type; access logs (which contain download tokens) are suppressed |
-| External model disclosure | A startup warning when `OLLAMA_BASE_URL` is not local unless `RESUME_LLM_EXTERNAL_PROVIDER_ACKNOWLEDGED=true` |
+| External model disclosure | A startup warning when the active model endpoint (`OPENAI_BASE_URL`) is not local unless `RESUME_LLM_EXTERNAL_PROVIDER_ACKNOWLEDGED=true` |
 
 Per-session tokens isolate sessions; they are not user accounts. Putting this
 behind real user identity (SSO) means mapping sessions to users in `authorize`.

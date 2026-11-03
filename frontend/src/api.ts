@@ -17,7 +17,7 @@ export type Proposal = {
   edit_type: string;
   reason: string;
   supporting_evidence: { location_id: string; quote: string; section: string | null }[];
-  model_confidence: number;
+  model_confidence: number | null;
   risk_level: 'low' | 'medium' | 'high';
   requires_user_confirmation: boolean;
   validation_warnings: string[];
@@ -76,11 +76,22 @@ export type SessionView = {
     context_truncated: boolean;
     model: Record<string, unknown>;
   } | null;
+  progress: AnalysisProgress | null;
   proposals: Proposal[];
   counts: Record<string, number>;
   error: { code: string; message: string } | null;
   latest_finalization: Finalization | null;
 };
+
+export type ProgressStep = {
+  id: string;
+  label: string;
+  state: 'done' | 'active' | 'pending' | 'failed';
+  detail: string | null;
+  started_at: string | null;
+};
+
+export type AnalysisProgress = { started_at: string; steps: ProgressStep[] };
 
 export class ApiError extends Error {
   constructor(public status: number, public code: string, message: string, public details: Record<string, unknown> = {}) {

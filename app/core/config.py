@@ -1,7 +1,7 @@
 """Environment-based configuration, validated at startup.
 
-Variable names keep the original ``OLLAMA_*``, ``DEBUG`` and ``FRONTEND_ORIGIN``
-names for compatibility; new settings use the ``RESUME_`` prefix.
+Variable names keep the conventional ``OPENAI_*``, ``DEBUG`` and ``FRONTEND_ORIGIN``
+names; application settings use the ``RESUME_`` prefix.
 """
 
 from __future__ import annotations
@@ -20,14 +20,16 @@ _ENV_MAP: dict[str, str] = {
     "debug": "DEBUG",
     "frontend_origins": "FRONTEND_ORIGIN",
     "llm_provider": "RESUME_LLM_PROVIDER",
-    "ollama_base_url": "OLLAMA_BASE_URL",
-    "ollama_model": "OLLAMA_MODEL",
+    "openai_base_url": "OPENAI_BASE_URL",
+    "openai_model": "OPENAI_MODEL",
+    "openai_api_key": "OPENAI_API_KEY",
     "llm_temperature": "RESUME_LLM_TEMPERATURE",
     "llm_timeout_seconds": "RESUME_LLM_TIMEOUT_SECONDS",
     "llm_max_tokens": "RESUME_LLM_MAX_TOKENS",
     "llm_max_retries": "RESUME_LLM_MAX_RETRIES",
     "llm_context_char_budget": "RESUME_LLM_CONTEXT_CHAR_BUDGET",
     "llm_external_provider_acknowledged": "RESUME_LLM_EXTERNAL_PROVIDER_ACKNOWLEDGED",
+    "judge_model": "RESUME_JUDGE_MODEL",
     "storage_dir": "RESUME_STORAGE_DIR",
     "database_path": "RESUME_DATABASE_PATH",
     "max_upload_bytes": "RESUME_MAX_UPLOAD_BYTES",
@@ -66,15 +68,18 @@ class Settings(BaseModel):
     frontend_origins: list[str] = Field(default_factory=lambda: ["http://localhost:5173", "http://127.0.0.1:5173"])
 
     # LLM
-    llm_provider: Literal["ollama", "disabled"] = "ollama"
-    ollama_base_url: str = "http://localhost:11434"
-    ollama_model: str = "gpt-oss:latest"
+    # "openai" = any OpenAI-compatible server (default: mlx-lm on this machine).
+    llm_provider: Literal["openai", "disabled"] = "openai"
+    openai_base_url: str = "http://127.0.0.1:8000/v1"
+    openai_model: str = "mlx-community/Qwen3-4B-Instruct-2507-4bit"
+    openai_api_key: str | None = None
     llm_temperature: float = Field(default=0.1, ge=0.0, le=1.0)
     llm_timeout_seconds: float = Field(default=180.0, gt=0, le=1800)
     llm_max_tokens: int = Field(default=4096, ge=256, le=32768)
     llm_max_retries: int = Field(default=2, ge=0, le=5)
     llm_context_char_budget: int = Field(default=24000, ge=2000, le=200000)
     llm_external_provider_acknowledged: bool = False
+    judge_model: str | None = None  # evaluation only; defaults to openai_model
 
     # Storage
     storage_dir: Path = Path("storage")
@@ -117,11 +122,11 @@ class Settings(BaseModel):
             return [item.strip() for item in value.split(",") if item.strip()]
         return value
 
-    @field_validator("ollama_base_url")
+    @field_validator("openai_base_url")
     @classmethod
     def _validate_url(cls, value: str) -> str:
         if not value.startswith(("http://", "https://")):
-            raise ValueError("OLLAMA_BASE_URL must start with http:// or https://")
+            raise ValueError("must start with http:// or https://")
         return value.rstrip("/")
 
     @model_validator(mode="after")
@@ -141,8 +146,8 @@ class Settings(BaseModel):
 
     @property
     def llm_is_remote(self) -> bool:
-        host = self.ollama_base_url.split("://", 1)[-1].split("/", 1)[0].split(":", 1)[0]
-        return host not in {"localhost", "127.0.0.1", "::1", "ollama", "host.docker.internal"}
+        host = self.openai_base_url.split("://", 1)[-1].split("/", 1)[0].split(":", 1)[0]
+        return host not in {"localhost", "127.0.0.1", "::1", "host.docker.internal"}
 
 
 def _read_dotenv(path: Path) -> dict[str, str]:
@@ -158,6 +163,9 @@ def _read_dotenv(path: Path) -> dict[str, str]:
         value = value.strip()
         if len(value) >= 2 and value[0] == value[-1] and value[0] in {"'", '"'}:
             value = value[1:-1]
+        elif " #" in value or "\t#" in value:
+            # Inline comment on an unquoted value: ``KEY=value   # note``.
+            value = value.split("#", 1)[0].rstrip()
         values[key.strip()] = value
     return values
 

@@ -7,7 +7,7 @@ name = "langgraph-resume-agent"
 version = "0.3.0"
 description = "Evidence-backed, user-approved edits to an uploaded DOCX resume with layout-preservation gates"
 requires-python = ">=3.11,<3.14"
-keywords = ["langgraph", "fastapi", "docx", "resume", "ollama"]
+keywords = ["langgraph", "fastapi", "docx", "resume", "mlx-lm"]
 # Lower bounds are the versions this code was developed and tested against;
 # upper bounds cap the next major release. Generate a lock file with `uv lock`.
 dependencies = [
@@ -31,6 +31,7 @@ dev = [
     "pytest>=8.0",
     "ruff>=0.6",
     "mypy>=1.10",
+    "debugpy>=1.8",
 ]
 
 [tool.setuptools.packages.find]

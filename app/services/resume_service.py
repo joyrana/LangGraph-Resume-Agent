@@ -39,6 +39,7 @@ from app.persistence.repositories import FinalizationRecord, ProposalRecord, Rep
 from app.resume.proposal_models import AlignmentEstimate, Decision, RiskLevel
 from app.workflow.graph import build_finalize_graph, build_proposal_graph
 from app.workflow.nodes import WorkflowDeps
+from app.workflow.progress import analysis_progress
 
 logger = logging.getLogger(__name__)
 _TOKEN_SPLIT = re.compile(r"\w+|\s+|[^\w\s]")
@@ -189,10 +190,9 @@ class ResumeService:
 
     def _view(self, session: SessionRecord, upload_warnings: list[str] | None = None) -> SessionView:
         index = self._index(session.id)
+        events = self.repo.events(session.id)
         if upload_warnings is None:
-            upload_warnings = next(
-                (e["data"].get("warnings", []) for e in self.repo.events(session.id) if e["event"] == "upload_warnings"), []
-            )
+            upload_warnings = next((e["data"].get("warnings", []) for e in events if e["event"] == "upload_warnings"), [])
         document = DocumentSummary(
             file_name=session.original_file_name,
             document_version=session.document_version,
@@ -229,6 +229,7 @@ class ResumeService:
             review_revision=session.review_revision,
             document=document,
             analysis=analysis,
+            progress=analysis_progress(events, session.status),
             proposals=proposals,
             counts={"total": len(records), **{d.value: counts.get(d.value, 0) for d in Decision}},
             error=ErrorInfo(code=session.error_code, message=session.error_message or "") if session.error_code else None,

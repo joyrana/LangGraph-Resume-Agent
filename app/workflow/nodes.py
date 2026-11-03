@@ -18,6 +18,7 @@ from app.persistence.repositories import Repository
 from app.resume.edit_proposer import propose_edits
 from app.resume.jd_analyzer import coverage_estimate
 from app.resume.proposal_models import Decision
+from app.workflow.progress import PROGRESS_EVENT
 from app.workflow.state import FinalizeState, ProposalState
 
 logger = logging.getLogger(__name__)
@@ -47,6 +48,10 @@ async def request_proposals(state: ProposalState, deps: WorkflowDeps) -> Proposa
     if index.document_version != session.document_version:
         return {"error_code": "stale_source", "error_message": "The stored document does not match the session."}
     s = deps.settings
+
+    def on_progress(step: str, detail: str) -> None:
+        deps.repo.record_event(session.id, PROGRESS_EVENT, data={"step": step, "detail": detail})
+
     try:
         run = await propose_edits(
             provider=deps.provider,
@@ -59,9 +64,11 @@ async def request_proposals(state: ProposalState, deps: WorkflowDeps) -> Proposa
             max_proposals=s.max_proposals,
             temperature=s.llm_temperature,
             max_tokens=s.llm_max_tokens,
+            on_progress=on_progress,
         )
     except LLMError as exc:
         return {"error_code": exc.code, "error_message": exc.message}
+    on_progress("estimate_coverage", "Comparing job keywords with your resume")
     estimate = coverage_estimate(session.job_description, index.full_text())
     analysis = {
         "alignment_summary": run.alignment_summary,
@@ -72,6 +79,8 @@ async def request_proposals(state: ProposalState, deps: WorkflowDeps) -> Proposa
         "model": run.model_metadata,
         "limitations": index.limitations,
     }
+    count = len(run.proposals)
+    on_progress("save", f"{count} suggestion{'s' if count != 1 else ''} ready for review")
     deps.repo.complete_analysis(session.id, analysis, run.proposals)
     logger.info(
         "proposals_ready",

@@ -27,7 +27,8 @@ htmlcov/
 venv/
 ENV/
 env/
-.vscode/
+.vscode/*
+!.vscode/launch.json
 .idea/
 *.swp
 *.swo

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import shutil
 from functools import cache
 
@@ -12,6 +13,7 @@ LIMITS = UploadLimits(
     max_upload_bytes=5 * 1024 * 1024, max_uncompressed_bytes=50 * 1024 * 1024, max_zip_members=500, max_compression_ratio=100.0
 )
 
+RUN_LIVE_LLM = os.environ.get("RUN_LIVE_LLM_TESTS") == "1"
 HAS_RENDERER = shutil.which("soffice") is not None and shutil.which("pdftoppm") is not None
 
 try:  # optional heavy dependencies
@@ -48,6 +50,7 @@ def pytest_collection_modifyitems(config, items):
     skip_renderer = pytest.mark.skip(reason="LibreOffice/pdftoppm not installed")
     skip_fastapi = pytest.mark.skip(reason="FastAPI not installed in this environment")
     skip_langgraph = pytest.mark.skip(reason="LangGraph not installed in this environment")
+    skip_live_llm = pytest.mark.skip(reason="calls a real model; set RUN_LIVE_LLM_TESTS=1")
     for item in items:
         if "renderer" in item.keywords and not HAS_RENDERER:
             item.add_marker(skip_renderer)
@@ -55,3 +58,5 @@ def pytest_collection_modifyitems(config, items):
             item.add_marker(skip_fastapi)
         if "requires_langgraph" in item.keywords and not HAS_LANGGRAPH:
             item.add_marker(skip_langgraph)
+        if "live_llm" in item.keywords and not RUN_LIVE_LLM:
+            item.add_marker(skip_live_llm)

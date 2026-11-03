@@ -44,7 +44,9 @@ class LLMProposal(BaseModel):
     edit_type: EditType
     reason: str = Field(min_length=1, max_length=500)
     supporting_evidence: list[LLMEvidence] = Field(min_length=1, max_length=4)
-    confidence: float = Field(ge=0.0, le=1.0)
+    # Optional: self-reported, never used as evidence, and small models without
+    # constrained decoding often omit it. A missing value is stored as None, not guessed.
+    confidence: float | None = Field(default=None, ge=0.0, le=1.0)
 
 
 class LLMProposalBatch(BaseModel):
@@ -83,7 +85,9 @@ class EditProposal(BaseModel):
     edit_type: EditType
     reason: str
     supporting_evidence: list[Evidence]
-    model_confidence: float = Field(description="Self-reported by the model; not evidence of correctness.")
+    model_confidence: float | None = Field(
+        default=None, description="Self-reported by the model (None if omitted); not evidence of correctness."
+    )
     risk_level: RiskLevel
     requires_user_confirmation: bool
     validation_warnings: list[str] = Field(default_factory=list)
