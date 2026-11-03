@@ -29,7 +29,7 @@ def make_service(tmp: Path, responses: list, *, renderer: bool = True, **overrid
     env = {
         "RESUME_STORAGE_DIR": str(tmp / "storage"),
         "RESUME_SIGNING_SECRET": "test-secret-" + "x" * 32,
-        "RESUME_LLM_PROVIDER": "ollama",
+        "RESUME_LLM_PROVIDER": "openai",
         **{k: str(v) for k, v in overrides.items()},
     }
     settings = load_settings(env)

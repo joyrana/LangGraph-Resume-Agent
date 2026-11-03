@@ -6,7 +6,7 @@ import asyncio
 import logging
 import uuid
 from contextlib import asynccontextmanager
-from typing import Annotated
+from typing import Annotated, Any
 
 from fastapi import Depends, FastAPI, File, Form, Header, Request, Response, UploadFile, status
 from fastapi.exceptions import RequestValidationError
@@ -39,7 +39,17 @@ from app.services.resume_service import ResumeService
 
 logger = logging.getLogger(__name__)
 DOCX_MEDIA_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-ERROR_RESPONSES = {code: {"model": ErrorEnvelope} for code in (401, 404, 409, 413, 422, 500, 502, 503)}
+ERROR_RESPONSES: dict[int | str, dict[str, Any]] = {code: {"model": ErrorEnvelope} for code in (401, 404, 409, 413, 422, 500, 502, 503)}
+
+
+# Dependency aliases live at module scope: with postponed annotations, FastAPI
+# resolves parameter annotations against module globals, not create_app() locals.
+def svc(request: Request) -> ResumeService:
+    return request.app.state.service
+
+
+Service = Annotated[ResumeService, Depends(svc)]
+SessionToken = Annotated[str | None, Header(alias="X-Session-Token")]
 
 
 def _envelope(code: str, message: str, status_code: int, details: dict | None = None) -> JSONResponse:
@@ -83,7 +93,7 @@ def create_app(settings: Settings | None = None, service: ResumeService | None =
         purger = asyncio.create_task(purge_loop())
         logger.info(
             "startup",
-            extra={"llm_provider": settings.llm_provider, "model": settings.ollama_model, "deployment_mode": settings.deployment_mode},
+            extra={"llm_provider": settings.llm_provider, "model": settings.openai_model, "deployment_mode": settings.deployment_mode},
         )
         try:
             yield
@@ -155,12 +165,6 @@ def create_app(settings: Settings | None = None, service: ResumeService | None =
         return _envelope("internal_error", "An unexpected error occurred.", 500)
 
     # ------------------------------------------------------------------ dependencies
-    def svc(request: Request) -> ResumeService:
-        return request.app.state.service
-
-    Service = Annotated[ResumeService, Depends(svc)]
-    SessionToken = Annotated[str | None, Header(alias="X-Session-Token")]
-
     def spawn_analysis(request: Request, service_: ResumeService, session_id: str) -> None:
         task = asyncio.create_task(service_.run_analysis(session_id))
         request.app.state.tasks.add(task)
@@ -183,7 +187,7 @@ def create_app(settings: Settings | None = None, service: ResumeService | None =
             "available": bool(renderer and renderer.available()),
             **service_.evaluator.renderer_info().model_dump(include={"version", "expected_version", "pinned"}),
         }
-        checks["llm"] = {"provider": settings.llm_provider, "model": settings.ollama_model, "remote_endpoint": settings.llm_is_remote}
+        checks["llm"] = {"provider": settings.llm_provider, "model": settings.openai_model, "remote_endpoint": settings.llm_is_remote}
         ok = checks["database"] and (checks["renderer"]["available"] or not settings.visual_gate_required)
         if not ok:
             response.status_code = 503

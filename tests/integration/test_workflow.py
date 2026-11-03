@@ -29,6 +29,23 @@ def data():
     return fixture_bytes("simple_one_page")
 
 
+def test_analysis_records_human_readable_progress(tmp_path, data):
+    h = make_service(tmp_path, [standard_batch(data)])
+    sid, token = create_and_analyze(h, data)
+    steps = [(e["data"]["step"], e["data"]["detail"]) for e in h.service.repo.events(sid) if e["event"] == "analysis_progress"]
+    assert [s for s, _ in steps] == ["read_resume", "ask_model", "check_evidence", "estimate_coverage", "save"]
+    assert steps[-1][1] == "3 suggestions ready for review"
+    assert h.service.get_session(sid, token).progress is None  # finished: no loader
+
+
+def test_failed_analysis_shows_where_it_stopped(tmp_path, data):
+    h = make_service(tmp_path, [LLMUnavailable("down")])
+    sid, token = create_and_analyze(h, data)
+    view = h.service.get_session(sid, token)
+    assert view.status == "analysis_failed"
+    assert {s.id: s.state for s in view.progress.steps}["ask_model"] == "failed"
+
+
 def test_full_workflow_upload_review_finalize_download(tmp_path, data):
     original_digest = hashlib.sha256(data).hexdigest()
     h = make_service(tmp_path, [standard_batch(data)])

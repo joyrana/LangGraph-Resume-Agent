@@ -13,7 +13,7 @@ edits are written into *your* original `.docx`, then verified before you downloa
 ![uv](https://img.shields.io/badge/deps-uv-DE5FE9)
 ![Ruff](https://img.shields.io/badge/lint-ruff-D7FF64?logo=ruff&logoColor=black)
 ![mypy](https://img.shields.io/badge/types-mypy-2A6DB2)
-![Local LLM](https://img.shields.io/badge/LLM-Ollama%20(local)-000000)
+![Local LLM](https://img.shields.io/badge/LLM-Qwen3--4B%20on%20mlx--lm%20(local)-000000)
 
 [Quickstart](#quickstart) · [How it works](#how-it-works) · [Verification](#how-we-know-the-layout-survived) ·
 [Development](#development) · [Architecture](docs/ARCHITECTURE.md) · [API](docs/API.md) · [Evaluation](docs/FIDELITY_EVALUATION.md)
@@ -37,34 +37,50 @@ takes the opposite approach:
 | Control | Accept the whole rewrite | **Accept or reject each edit**; nothing is applied without approval |
 | Facts | Model may embellish | Every edit must quote resume evidence; unsupported numbers, tools, certifications and job keywords are **rejected by code** |
 | Trust | "Looks fine" | Output is re-parsed, diffed and **rendered side by side**; failures block the download |
-| Privacy | Cloud API | Runs on a **local model** (Ollama) by default; files are auto-deleted |
+| Privacy | Cloud API | Runs on a **local model** (Qwen3-4B on mlx-lm) by default; files are auto-deleted |
 
 ## Quickstart
 
-**Prerequisites:** Python 3.11+, [uv](https://docs.astral.sh/uv/), Node.js 18+,
-[Ollama](https://ollama.com), and LibreOffice + poppler for the layout check
-(`brew install --cask libreoffice && brew install poppler`, or
-`apt install libreoffice-writer-nogui poppler-utils`).
+**Prerequisites:** macOS with Homebrew or Debian/Ubuntu with apt, plus a
+model server you run yourself. `setup.sh` installs uv, the Python deps,
+Node.js and LibreOffice + poppler (layout check). It does not install a
+model or model server.
+
+The default model is `mlx-community/Qwen3-4B-Instruct-2507-4bit`, served by
+[mlx-lm](https://github.com/ml-explore/mlx-lm)'s OpenAI-compatible server on
+port 8000. The API therefore runs on **8001**.
 
 ```bash
 git clone https://github.com/joyrana/LangGraph-Resume-Agent.git && cd LangGraph-Resume-Agent
-cp env.example .env
-uv sync --extra dev                  # creates .venv; run `uv lock` first if uv.lock is missing
-ollama pull gpt-oss                  # any chat model works; set OLLAMA_MODEL in .env
-(cd frontend && npm ci || npm install)
-./dev.sh                             # API → http://127.0.0.1:8000  ·  UI → http://localhost:5173
+./setup.sh      # idempotent; --skip-system skips Homebrew/apt packages
+# your model server, e.g. in another terminal:
+#   mlx_lm.server --model mlx-community/Qwen3-4B-Instruct-2507-4bit --port 8000
+./dev.sh        # API → http://127.0.0.1:8001 + UI → http://localhost:5173
 ```
 
+Any OpenAI-compatible server (llama.cpp, vLLM, LM Studio) works: set
+`OPENAI_BASE_URL` and `OPENAI_MODEL`.
+
+<details>
+<summary><b>Manual setup</b></summary>
+
+```bash
+cp env.example .env
+uv sync --extra dev
+(cd frontend && npm ci || npm install)
+# plus: brew install --cask libreoffice && brew install poppler
+#   or: apt install libreoffice-writer-nogui poppler-utils
+```
+</details>
+
 Open the UI, upload a `.docx`, paste a job description and review the
-suggestions. Interactive API docs are at `http://127.0.0.1:8000/docs`.
+suggestions. Interactive API docs are at `http://127.0.0.1:8001/docs`.
 
 <details>
 <summary><b>Run with Docker</b></summary>
 
 ```bash
-docker compose up --build                     # uses the model at $OLLAMA_BASE_URL
-docker compose --profile ollama up --build    # also starts an Ollama container
-docker compose exec ollama ollama pull gpt-oss
+docker compose up --build    # API on http://localhost:8001, using mlx-lm on the host (host.docker.internal:8000)
 ```
 
 The image is Ubuntu 24.04-based (LibreOffice 24.2, the version the layout
@@ -150,11 +166,11 @@ app/
 ├── core/          config (validated env), errors, JSON logging, tokens
 ├── document/      upload validation · OOXML parser · editor · fidelity gates
 ├── resume/        prompts · proposal schemas · evidence validator · edit policy
-├── llm/           provider protocol (Ollama, disabled, scripted for tests)
+├── llm/           provider protocol (OpenAI-compatible/mlx-lm, disabled, scripted for tests)
 ├── workflow/      LangGraph graphs, typed state, nodes, routing
 ├── persistence/   SQLite repository + integrity-checked artifact store
 ├── services/      ResumeService — every use case, framework-free
-└── evaluation/    fixture corpus, regression injectors, calibration, proposal eval
+└── evaluation/    fixture corpus, regression injectors, calibration, proposal eval, LLM judge
 frontend/          React + TypeScript review UI (Vite)
 tests/             unit · integration · security · evaluation
 evaluation/        labelled datasets and machine-readable reports
@@ -169,7 +185,8 @@ invalid value stops the server with a message naming the variable. Full list:
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `OLLAMA_BASE_URL` · `OLLAMA_MODEL` | `http://localhost:11434` · `gpt-oss:latest` | Model endpoint (resume text is sent here) |
+| `RESUME_LLM_PROVIDER` | `openai` | `openai` (any OpenAI-compatible server) · `disabled` |
+| `OPENAI_BASE_URL` · `OPENAI_MODEL` | `http://127.0.0.1:8000/v1` · `mlx-community/Qwen3-4B-Instruct-2507-4bit` | Model endpoint (resume text is sent here) |
 | `RESUME_LLM_TEMPERATURE` · `…_TIMEOUT_SECONDS` · `…_MAX_RETRIES` | `0.1` · `180` · `2` | Low-variance structured output with bounded retries |
 | `RESUME_DEPLOYMENT_MODE` | `local` | `shared` requires `RESUME_API_AUTH_TOKEN` + `RESUME_SIGNING_SECRET` and hides `/docs` |
 | `RESUME_SESSION_TTL_HOURS` | `24` | Automatic deletion of uploads, outputs and renders |
@@ -180,7 +197,7 @@ invalid value stops the server with a message naming the variable. Full list:
 ## Development
 
 ```bash
-uv sync --extra dev                                   # Python deps incl. pytest, ruff, mypy
+uv sync --extra dev                                   # Python deps incl. pytest, ruff, mypy, debugpy
 uv run pytest                                         # all suites (~1 min with LibreOffice)
 uv run pytest -m "not renderer"                       # skip LibreOffice-dependent tests
 uv run ruff check . && uv run ruff format --check .   # lint + format
@@ -193,15 +210,52 @@ uv run mypy app                                       # type check
 | `tests/unit` | parser, locations, editor, evidence validator, proposer, fidelity gates, config, logging |
 | `tests/integration` | full workflow through the service (scripted model, real renderer); HTTP contract tests |
 | `tests/security` | spoofed types, zip bombs, XXE, traversal, macros, encryption, external templates, prompt injection |
-| `tests/evaluation` | corpus determinism and labelled-dataset regression guards |
+| `tests/evaluation` | corpus determinism, labelled-dataset regression guards, LLM-judge rules and metrics |
 
 Tests use a **scripted model**, so they are deterministic, offline and free.
-Evaluate a real model with:
+`RUN_LIVE_LLM_TESTS=1 uv run pytest -m live_llm` runs the tests that call the
+real model. Evaluate a real model with:
 
 ```bash
 uv run python -m app.evaluation.proposal_eval --live   # schema validity, grounding rate, latency, tokens
 uv run python -m app.evaluation.fidelity_eval          # recalibrate the gates (~30 min)
 ```
+
+### LLM-as-a-judge
+
+A second model grades each edit on a 1–5 rubric: **faithfulness** (no facts
+beyond the resume and candidate notes), **meaning preservation** (no inflated
+scope or leadership), **writing quality** and **job relevance**. It also lists
+any unsupported claims. The judge writes its rationale before its scores.
+Pass/fail is computed in code (faithfulness ≥ 4, meaning ≥ 4, no unsupported
+claims), not chosen by the model. The judge only measures quality. It does not
+gate delivery; the deterministic evidence validator does.
+
+```bash
+# 1. Calibrate the judge: compare its fabrication flag with the human labels in proposals_v1.json
+uv run python -m app.evaluation.judge_eval --calibrate --min-score 0.85
+# 2. Grade live proposals: generate for every corpus fixture, validate, then judge what survives
+uv run python -m app.evaluation.judge_eval --min-score 0.9
+```
+
+Reports go to `evaluation/reports/judge_*.json` (score, fabrication recall,
+false-alarm rate or mean rubric scores, and each failure with its rationale).
+`--min-score` exits non-zero for CI. Set `RESUME_JUDGE_MODEL` to grade with a
+different model than the generator, because models grade their own output
+leniently. Changing the judge prompt bumps `JUDGE_PROMPT_VERSION`.
+
+### Debugging (debugpy)
+
+```bash
+./dev.sh --debug           # API under debugpy on 127.0.0.1:5678 ($DEBUGPY_PORT)
+./dev.sh --debug --wait    # block startup until a debugger attaches
+uv run python -m debugpy --listen 5678 --wait-for-client -m app.evaluation.judge_eval --calibrate   # any module
+```
+
+In VS Code, [`.vscode/launch.json`](.vscode/launch.json) provides *API:
+launch*, *API: attach to ./dev.sh --debug*, *Pytest: current file*, both judge
+evaluations, and *Python: current file*. Other editors: attach any DAP client
+to port 5678.
 
 **Conventions:** typed Python (Pydantic models at every boundary); a small,
 framework-free service layer; graph state holds ids, never documents; every
@@ -255,8 +309,8 @@ Details and threat model: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md#security-m
 
 | Symptom | Fix |
 |---|---|
-| "The language model service could not be reached" | `ollama serve`; check `OLLAMA_BASE_URL`; then **Try analysis again** |
-| "Model service rejected the request" | Pull the model: `ollama pull <OLLAMA_MODEL>` |
+| "The language model service could not be reached" | Start `mlx_lm.server … --port 8000`; check `OPENAI_BASE_URL`; then **Try analysis again** |
+| "Model service rejected the request" | Check `OPENAI_MODEL` matches `curl 127.0.0.1:8000/v1/models` |
 | "Rendered layout compared: Not run" | Install LibreOffice + poppler or set `RESUME_SOFFICE_PATH`; check `GET /ready` |
 | "Renderer version … differs from pinned" | Use LibreOffice 24.2, or recalibrate and update `RESUME_RENDERER_EXPECTED_VERSION` |
 | Upload rejected: "links to external content" | Embed the linked template or image in Word and save again |

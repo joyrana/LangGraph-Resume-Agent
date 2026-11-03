@@ -2,28 +2,18 @@ services:
   api:
     build: .
     ports:
-      - "8000:8000"
+      - "8001:8000"   # host 8000 is the local mlx-lm model server
     env_file:
       - path: .env
         required: false
     environment:
-      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://ollama:11434}
-      OLLAMA_MODEL: ${OLLAMA_MODEL:-gpt-oss:latest}
+      # mlx-lm runs on the Mac host (Metal is not available inside containers).
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-http://host.docker.internal:8000/v1}
       RESUME_STORAGE_DIR: /data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"   # needed on Linux; built in on Docker Desktop
     volumes:
       - resume-data:/data
-    depends_on:
-      ollama:
-        condition: service_started
-        required: false
-
-  # Optional local model: `docker compose --profile ollama up`, then `docker compose exec ollama ollama pull gpt-oss`
-  ollama:
-    image: ollama/ollama:latest
-    profiles: ["ollama"]
-    volumes:
-      - ollama-models:/root/.ollama
 
 volumes:
   resume-data:
-  ollama-models:

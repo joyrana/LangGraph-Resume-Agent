@@ -100,7 +100,7 @@ class EvidenceValidator:
         ranges: dict[str, list[tuple[int, int]]] = {}
         # Higher self-reported confidence first only to break ties between overlapping
         # proposals; it never bypasses a check.
-        ordered = sorted(enumerate(batch.proposals), key=lambda item: (-item[1].confidence, item[0]))
+        ordered = sorted(enumerate(batch.proposals), key=lambda item: (-(item[1].confidence or 0.0), item[0]))
         for _, raw in ordered:
             try:
                 proposal = self._validate_one(raw)

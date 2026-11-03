@@ -1,6 +1,6 @@
 # HTTP API
 
-Interactive docs: `http://localhost:8000/docs` (local mode only).
+Interactive docs: `http://localhost:8001/docs` (local mode only).
 
 Every error uses one envelope:
 

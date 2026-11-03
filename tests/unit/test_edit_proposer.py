@@ -74,6 +74,46 @@ def test_extra_fields_rejected_by_schema():
         _run(provider)
 
 
+def _without(item: dict, field: str) -> dict:
+    return {k: v for k, v in item.items() if k != field}
+
+
+def test_reask_names_the_invalid_fields():
+    index, _ = parse_docx(fixture_bytes("simple_one_page"))
+    good = proposal(index, "Worked on the migration", "Worked on the migration of", "Migrated")
+    provider = ScriptedProvider([batch_json(_without(good, "reason")), batch_json(good)])
+    run, _ = _run(provider)
+    assert "proposals.0.reason: Field required" in provider.requests[1].user
+    assert len(run.proposals) == 1 and run.model_metadata["attempts"] == 2
+
+
+def test_one_malformed_proposal_does_not_sink_the_batch():
+    index, _ = parse_docx(fixture_bytes("simple_one_page"))
+    good = proposal(index, "Worked on the migration", "Worked on the migration of", "Migrated")
+    bad = _without(proposal(index, "Responsible for code reviews", "Responsible for", "Owned"), "edit_type")
+    reply = batch_json(good, bad)
+    run, _ = _run(ScriptedProvider([reply, reply]))
+    assert [p.proposed_text for p in run.proposals] == ["Migrated"]
+    assert [(r.code, r.proposed_text) for r in run.rejected] == [("schema_invalid", "Owned")]
+    assert "edit_type" in run.rejected[0].message
+    assert run.model_metadata["schema_rejected"] == 1 and run.model_metadata["raw_proposals"] == 2
+
+
+def test_missing_confidence_is_accepted_as_unknown():
+    index, _ = parse_docx(fixture_bytes("simple_one_page"))
+    item = _without(proposal(index, "Worked on the migration", "Worked on the migration of", "Migrated"), "confidence")
+    provider = ScriptedProvider([batch_json(item)])
+    run, _ = _run(provider)
+    assert len(provider.requests) == 1 and run.proposals[0].model_confidence is None
+
+
+def test_partial_first_attempt_is_kept_when_reask_is_worse():
+    index, _ = parse_docx(fixture_bytes("simple_one_page"))
+    good = proposal(index, "Worked on the migration", "Worked on the migration of", "Migrated")
+    run, _ = _run(ScriptedProvider([batch_json(good, {"location_id": "x"}), "{broken"]))
+    assert len(run.proposals) == 1 and run.rejected[0].code == "schema_invalid"
+
+
 def test_timeout_propagates_without_fake_score():
     provider = ScriptedProvider([LLMUnavailable("timed out")])
     with pytest.raises(LLMUnavailable):

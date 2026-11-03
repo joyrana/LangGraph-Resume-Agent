@@ -11,6 +11,7 @@ import {
   getFinalization,
   getSession,
   retryAnalysis,
+  type AnalysisProgress as Progress,
   type Decision,
   type DiffSegment,
   type Finalization,
@@ -197,11 +198,8 @@ export default function App() {
       ) : (
         <main className="workspace">
           <SessionHeader session={session} onDelete={onDelete} onNew={() => reset()} busy={busy} />
-          {session.status === 'analyzing' && (
-            <p className="status-line" role="status" aria-live="polite">
-              Reading your resume and drafting suggestions. This can take a minute or two with a local model.
-            </p>
-          )}
+          {session.status === 'analyzing' && <AnalysisProgressPanel progress={session.progress} />}
+          {session.status === 'analysis_failed' && session.progress && <AnalysisProgressPanel progress={session.progress} failed />}
           {session.status === 'analysis_failed' && (
             <div className="banner error" role="alert">
               <p>{session.error?.message ?? 'Analysis failed.'}</p>
@@ -377,6 +375,66 @@ function AnalysisSummary({ session }: { session: SessionView }) {
   );
 }
 
+/* ------------------------------------------------------------------ analysis progress */
+
+function formatElapsed(ms: number): string {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`;
+}
+
+function AnalysisProgressPanel({ progress, failed = false }: { progress: Progress | null; failed?: boolean }) {
+  const [now, setNow] = useState(() => Date.now());
+  const [mountedAt] = useState(() => Date.now());
+  useEffect(() => {
+    if (failed) return;
+    const id = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(id);
+  }, [failed]);
+
+  const startedAt = progress ? Date.parse(progress.started_at) : NaN;
+  const elapsed = now - (Number.isNaN(startedAt) ? mountedAt : startedAt);
+  const active = progress?.steps.find((s) => s.state === 'active');
+
+  return (
+    <section className={failed ? 'progress-panel failed' : 'progress-panel'} aria-labelledby="progress-title">
+      <div className="progress-head">
+        {!failed && <span className="spinner large" aria-hidden="true" />}
+        <div>
+          <h2 id="progress-title">{failed ? 'Analysis stopped' : 'Working on your suggestions'}</h2>
+          {!failed && (
+            <p className="help">
+              {formatElapsed(elapsed)} elapsed · a local model usually takes a minute or two. You can leave this page open.
+            </p>
+          )}
+        </div>
+      </div>
+      <p className="visually-hidden" role="status" aria-live="polite">
+        {failed ? 'Analysis stopped.' : active ? `${active.label}. ${active.detail ?? ''}` : 'Starting analysis.'}
+      </p>
+      {progress ? (
+        <ol className="progress-steps">
+          {progress.steps.map((s) => (
+            <li key={s.id} className={`progress-step ${s.state}`}>
+              <span className="progress-icon" aria-hidden="true">
+                {s.state === 'done' ? '✓' : s.state === 'failed' ? '✕' : s.state === 'active' ? <span className="spinner" /> : ''}
+              </span>
+              <span>
+                <span className="progress-label">
+                  {s.label}
+                  <span className="visually-hidden"> ({s.state})</span>
+                </span>
+                {s.detail && s.state !== 'pending' && <span className="progress-detail">{s.detail}</span>}
+              </span>
+            </li>
+          ))}
+        </ol>
+      ) : (
+        <p className="help">Starting…</p>
+      )}
+    </section>
+  );
+}
+
 /* ------------------------------------------------------------------ review */
 
 function Review({
@@ -435,13 +493,20 @@ function Review({
           <p className="help">You changed decisions after the last check. Apply edits again to get a new file.</p>
         )}
         <button className="primary" disabled={locked || accepted === 0 || Boolean(finalization?.is_current)} onClick={onFinalize}>
+          {busy === 'finalize' && <span className="spinner" aria-hidden="true" />}
           {busy === 'finalize'
-            ? 'Applying and checking layout…'
+            ? 'Applying edits and checking layout…'
             : finalization?.is_current
               ? 'Accepted edits applied'
               : `Apply ${accepted} accepted edit${accepted === 1 ? '' : 's'} to my file`}
         </button>
         {accepted === 0 && <p className="help">Accept at least one edit to continue.</p>}
+        {busy === 'finalize' && (
+          <p className="help" role="status">
+            Writing your accepted edits into the original file, then rendering both versions to compare the layout. This can take up to a
+            minute.
+          </p>
+        )}
       </div>
     </section>
   );

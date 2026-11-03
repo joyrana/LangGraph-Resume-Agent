@@ -72,6 +72,21 @@ class FinalizationView(BaseModel):
     report: FidelityReport | None = None
 
 
+class ProgressStep(BaseModel):
+    id: str
+    label: str
+    state: Literal["done", "active", "pending", "failed"]
+    detail: str | None = None
+    started_at: str | None = None
+
+
+class AnalysisProgress(BaseModel):
+    """What the analysis is doing right now. Present only while analyzing or after a failure."""
+
+    started_at: str
+    steps: list[ProgressStep]
+
+
 class SessionView(BaseModel):
     session_id: str
     status: str
@@ -81,6 +96,7 @@ class SessionView(BaseModel):
     review_revision: int
     document: DocumentSummary
     analysis: AnalysisView | None = None
+    progress: AnalysisProgress | None = None
     proposals: list[ProposalView] = Field(default_factory=list)
     counts: dict[str, int] = Field(default_factory=dict)
     error: ErrorInfo | None = None

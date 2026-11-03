@@ -7,7 +7,7 @@ unsupported-claim block rate, and false rejections of grounded edits.
 Live (``--live``): calls the configured model on every corpus fixture with a
 sample job description and reports schema-validity rate, evidence-grounding
 rate (proposals surviving validation / proposals returned), rejection reasons,
-latency and token counts. Requires a reachable model (e.g. Ollama).
+latency and token counts. Requires a reachable model server (mlx-lm by default).
 
 Usage::
 
